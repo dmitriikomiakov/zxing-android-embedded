@@ -13,6 +13,10 @@ Features:
 
 A sample application is available in [Releases](https://github.com/journeyapps/zxing-android-embedded/releases).
 
+## Difference with journeyapps/zxing-android-embedded
+
+The fork supports few image preprocessings like blurring and scaling for improving scanning performance on some devices like Huawei P10 (ordinary with damaged barcodes).
+
 ## Adding aar dependency with Gradle
 
 From version 3 this is a single library, supporting Gingerbread and later versions of Android
