@@ -14,9 +14,9 @@ import java.io.ByteArrayOutputStream;
  * komyakovds@byndyusoft.com
  * on 22.01.2018.
  */
-public class YuvScale {
+public class YuvUtils {
 
-    private final static String TAG = "YuvScale";
+    private final static String TAG = "YuvUtils";
 
     public static byte[] blurAndTransformToNV21(byte[] data,
                                                 int dataWidth,
