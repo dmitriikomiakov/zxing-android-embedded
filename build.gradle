@@ -15,7 +15,7 @@ subprojects {
         mavenLocal()
     }
 
-    version = '3.5.0'
+    version = '3.5.1-byndyusoft'
     group = 'com.journeyapps'
 
     ext.androidBuildTools = '25.0.2'
