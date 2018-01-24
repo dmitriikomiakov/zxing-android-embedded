@@ -1,3 +1,7 @@
+### 3.5.1-byndyusoft (2017-03-20)
+
+* Allow bluring and scaling images before barcode decoding 
+
 ### 3.5.0 (2017-03-20)
 
 * Allow changing the REQUEST_CODE value (#234).
