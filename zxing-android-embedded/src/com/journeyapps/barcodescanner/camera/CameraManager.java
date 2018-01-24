@@ -101,7 +101,7 @@ public final class CameraManager {
                         throw new NullPointerException("No preview data received");
                     }
                     int format = camera.getParameters().getPreviewFormat();
-                    SourceData source = new SourceData(data, cameraResolution.width, cameraResolution.height, format, getCameraRotation());
+                    SourceData source = new SourceData(data, cameraResolution.width, cameraResolution.height, format, getCameraRotation(), settings.getScaleRate(), settings.isBlurRequired());
                     callback.onPreview(source);
                 } catch (RuntimeException e) {
                     // Could be:

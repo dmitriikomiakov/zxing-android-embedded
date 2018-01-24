@@ -33,6 +33,12 @@ public class SourceData {
     /** Crop rectangle, in display orientation. */
     private Rect cropRect;
 
+    /** Image resize rate */
+    private float scaleRate;
+
+    /** Image blur requirement flag */
+    private boolean blurRequired;
+
     /**
      *
      * @param data the image data
@@ -40,17 +46,28 @@ public class SourceData {
      * @param dataHeight height of the data
      * @param imageFormat ImageFormat.NV21 or ImageFormat.YUY2
      * @param rotation camera rotation relative to display rotation, in degrees (0, 90, 180 or 270).
+     * @param scaleRate image resize rate
+     * @param blurRequired image blur requirement flag
      */
-    public SourceData(byte[] data, int dataWidth, int dataHeight, int imageFormat, int rotation) {
-        this.data = data;
-        this.dataWidth = dataWidth;
-        this.dataHeight = dataHeight;
-        this.rotation = rotation;
-        this.imageFormat = imageFormat;
-        if(dataWidth * dataHeight > data.length) {
-            throw new IllegalArgumentException("Image data does not match the resolution. " + dataWidth + "x" + dataHeight + " > " + data.length);
+    public SourceData(byte[] data, int dataWidth, int dataHeight, int imageFormat, int rotation, float scaleRate, boolean blurRequired) {
+        this.scaleRate = scaleRate;
+        this.blurRequired = blurRequired;
+        if (this.scaleRate != 1 || this.blurRequired) {
+            this.dataWidth = Math.round(dataWidth * scaleRate);
+            this.dataHeight = Math.round(dataHeight * scaleRate);
+            this.data = YuvUtils.blurAndTransformToNV21(data, dataWidth, dataHeight, this.dataWidth, this.dataHeight, imageFormat, blurRequired);
+            this.rotation = rotation;
+            this.imageFormat = ImageFormat.NV21;
+        } else {
+            this.data = data;
+            this.dataWidth = dataWidth;
+            this.dataHeight = dataHeight;
+            this.rotation = rotation;
+            this.imageFormat = imageFormat;
         }
-
+        if(this.dataWidth * this.dataHeight > this.data.length) {
+            throw new IllegalArgumentException("Image data does not match the resolution. " + this.dataWidth + "x" + this.dataHeight + " > " + data.length);
+        }
     }
 
     public Rect getCropRect() {
@@ -63,7 +80,14 @@ public class SourceData {
      * @param cropRect the new crop rectangle.
      */
     public void setCropRect(Rect cropRect) {
-        this.cropRect = cropRect;
+        if (scaleRate != 1) {
+            this.cropRect = new Rect((int)(cropRect.left * scaleRate),
+                    (int)(cropRect.top * scaleRate),
+                    (int)(cropRect.right * scaleRate),
+                    (int)(cropRect.bottom * scaleRate));
+        } else {
+            this.cropRect = cropRect;
+        }
     }
 
     public byte[] getData() {
@@ -96,6 +120,10 @@ public class SourceData {
 
     public int getImageFormat() {
         return imageFormat;
+    }
+
+    public boolean isBlurRequired() {
+        return blurRequired;
     }
 
     public PlanarYUVLuminanceSource createSource() {
