@@ -34,7 +34,7 @@ public class SourceData {
     private Rect cropRect;
 
     /** Image resize rate */
-    private double scaleRate;
+    private float scaleRate;
 
     /** Image blur requirement flag */
     private boolean blurRequired;
@@ -49,13 +49,13 @@ public class SourceData {
      * @param scaleRate image resize rate
      * @param blurRequired image blur requirement flag
      */
-    public SourceData(byte[] data, int dataWidth, int dataHeight, int imageFormat, int rotation, double scaleRate, boolean blurRequired) {
+    public SourceData(byte[] data, int dataWidth, int dataHeight, int imageFormat, int rotation, float scaleRate, boolean blurRequired) {
         this.scaleRate = scaleRate;
         this.blurRequired = blurRequired;
         if (this.scaleRate != 1 || this.blurRequired) {
-            this.dataWidth = (int) (dataWidth * scaleRate);
-            this.dataHeight = (int) (dataHeight * scaleRate);
-            this.data = YuvScale.scaleToNV21(data, dataWidth, dataHeight, this.dataWidth, this.dataHeight, imageFormat, blurRequired);
+            this.dataWidth = Math.round(dataWidth * scaleRate);
+            this.dataHeight = Math.round(dataHeight * scaleRate);
+            this.data = YuvUtils.blurAndTransformToNV21(data, dataWidth, dataHeight, this.dataWidth, this.dataHeight, imageFormat, blurRequired);
             this.rotation = rotation;
             this.imageFormat = ImageFormat.NV21;
         } else {

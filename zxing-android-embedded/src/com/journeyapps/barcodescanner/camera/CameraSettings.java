@@ -15,7 +15,7 @@ public class CameraSettings {
     private boolean exposureEnabled = false;
     private boolean autoTorchEnabled = false;
     private FocusMode focusMode = FocusMode.AUTO;
-    private double scaleRate = 1;
+    private float scaleRate = 1;
     private boolean blurRequired = false;
 
     public enum FocusMode {
@@ -163,11 +163,11 @@ public class CameraSettings {
         this.autoTorchEnabled = autoTorchEnabled;
     }
 
-    public double getScaleRate() {
+    public float getScaleRate() {
         return scaleRate;
     }
 
-    public void setScaleRate(double scaleRate) {
+    public void setScaleRate(float scaleRate) {
         this.scaleRate = scaleRate;
     }
 

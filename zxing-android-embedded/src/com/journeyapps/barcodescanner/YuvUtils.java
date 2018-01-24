@@ -18,30 +18,28 @@ public class YuvScale {
 
     private final static String TAG = "YuvScale";
 
-    public static byte[] scaleToNV21(byte[] data,
-                                     int dataWidth,
-                                     int dataHeight,
-                                     int targetWidth,
-                                     int targetHeight,
-                                     int imageFormat,
-                                     boolean blurRequired) {
+    public static byte[] blurAndTransformToNV21(byte[] data,
+                                                int dataWidth,
+                                                int dataHeight,
+                                                int targetWidth,
+                                                int targetHeight,
+                                                int imageFormat,
+                                                boolean blurRequired) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         YuvImage yuvImage = new YuvImage(data, imageFormat, dataWidth, dataHeight, null);
         yuvImage.compressToJpeg(new Rect(0, 0, dataWidth, dataHeight), 100, out);
         byte[] imageBytes = out.toByteArray();
         Bitmap image = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
 
-        if (dataWidth != targetWidth || dataHeight != targetHeight) {
+        if (blurRequired) {
+            Log.i(TAG, "blurring...");
+            Bitmap blurred = fastBlur(image, targetWidth, targetHeight, 2);
+            image.recycle();
+            image = blurred;
+        } else if (dataWidth != targetWidth || dataHeight != targetHeight) {
             Bitmap scaled = Bitmap.createScaledBitmap(image, targetWidth, targetHeight, true);
             image.recycle();
             image = scaled;
-        }
-
-        if (blurRequired) {
-            Log.i(TAG, "blurring...");
-            Bitmap blurred = fastBlur(image, 1.f, 2);
-            image.recycle();
-            image = blurred;
         }
 
         if (image == null) {
@@ -57,11 +55,12 @@ public class YuvScale {
         }
     }
 
-    private static Bitmap fastBlur(Bitmap sentBitmap, float scale, int radius) {
+    private static Bitmap fastBlur(Bitmap sentBitmap,
+                                   int targetWidth,
+                                   int targetHeight,
+                                   int radius) {
 
-        int width = Math.round(sentBitmap.getWidth() * scale);
-        int height = Math.round(sentBitmap.getHeight() * scale);
-        sentBitmap = Bitmap.createScaledBitmap(sentBitmap, width, height, false);
+        sentBitmap = Bitmap.createScaledBitmap(sentBitmap, targetWidth, targetHeight, false);
 
         Bitmap bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);
 
