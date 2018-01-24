@@ -1,4 +1,4 @@
-### 3.5.1-byndyusoft (2017-03-20)
+### 3.5.1-byndyusoft (2018-01-24)
 
 * Allow bluring and scaling images before barcode decoding 
 
